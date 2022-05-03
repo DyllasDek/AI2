@@ -3,7 +3,7 @@ import random as rnd
 from mido import Message, MidiFile, MidiTrack
 
 input_file = 'barbiegirl_mono.mid'
-input_file = 'input1.mid'
+#input_file = 'input1.mid'
 pat = '_2.mid'
 
 key = music21.converter.parse(input_file).analyze('key')
