@@ -2,13 +2,17 @@ import music21
 import random as rnd
 from mido import Message, MidiFile, MidiTrack
 
+
+#Change this variable if you want to work with another file
+input_num = 1
 # Variables for files
-input_file = 'input1.mid'
+input_file = 'input'+str(input_num)+'.mid'
 mid = MidiFile(input_file)
-pat = 'DanilaKorneenkoOutput'+str(1)+'.mid'
-vel = int(mid.tracks[1][4].velocity) - 20
+pat = 'DanilaKorneenkoOutput'+str(input_num)+'.mid'
+
 
 # Variables for evalutionary algorithm
+vel = int(mid.tracks[1][4].velocity) - 20
 note_gen = [i for i in range(12)]
 chord_gen = [i for i in range(3)]
 pop_size = 32
@@ -58,18 +62,12 @@ wti_min = []
 if wti == 0:
     wti_maj = [t_maj[11], t_maj[0], t_maj[1]]
     wti_min = [t_min[11], t_min[0], t_min[1]]
-    print(f"tone major are {t_maj[11]} , {t_maj[0]}, {t_maj[1]}")
-    print(f"tone minor are {t_min[11]} , {t_min[0]}, {t_min[1]}")
 elif wti == 11:
     wti_maj = [t_maj[10], t_maj[11], t_maj[0]]
     wti_min = [t_min[10], t_min[11], t_min[0]]
-    print(f"tone major are {t_maj[10]} , {t_maj[11]}, {t_maj[0]}")
-    print(f"tone minor are {t_min[10]} , {t_min[11]}, {t_min[0]}")
 else:
     wti_maj = t_maj[wti - 1:wti + 2]
     wti_min = t_min[wti - 1:wti + 2]
-    print(f"tone major are {t_maj[wti - 1]} , {t_maj[wti]}, {t_maj[wti + 1]}")
-    print(f"tone minor are {t_min[wti - 1]} , {t_min[wti]}, {t_min[wti + 1]}")
 
 # Paterns for chords
 maj_pat = [0, 4, 7]
@@ -169,7 +167,6 @@ def create_pop(chromo_size):
     pop = []
     for _ in range(pop_size):
         pop.append(Chromosome(chromo_size, note_gen, chord_gen))
-    print(len(pop))
     return pop
 
 # Just sort population (with upgraded bubble sort)
@@ -279,7 +276,7 @@ for i in range(1000):
     sort_pop(popul)
 
     # Print our generation
-    print(f"{i}th generation. Best genom in generation:{popul[0].gen_note} and its rating {popul[0].rating}")
+    print(f"{i+1}th generation. Best genom in generation:{popul[0].gen_note} and its rating {popul[0].rating}")
 
     # If we've found best member - leave
     if popul[0].rating == 0:
@@ -289,7 +286,7 @@ for i in range(1000):
     # Choose best of the generation (1/2 of the population)
     best_individs(popul)
 
-    # Generate new childrens and make it as new generation
+    # Generate new children and make it as new generation
     new_gen(popul, survivors, pop_size // 2)
 
     # Mutate some members in random
@@ -303,7 +300,7 @@ final_comp = []
 for i in range(len(final_genom_chord)):
     final_comp.append([popul[0].gen_note[0][i], popul[0].gen_note[1][i], octave[i]])
 
-# Output pipi-pupu check
+# Output track
 track = MidiTrack()
 mid.tracks.append(track)
 
@@ -314,6 +311,7 @@ track.append(mid.tracks[1][1])
 # Input data in MIDI format
 flagged = False
 for accord in final_comp:
+    # Skip void if we have it in count
     if accord[0] is None:
         flagged = True
         continue
@@ -337,6 +335,7 @@ for accord in final_comp:
                                               + all_chords[accord[1]][2]  # add value to get accord
                                               + accord[2] * 12, velocity=vel, time=0))
         flagged = False
+    # Standart output
     else:
         track.append(Message('note_on', note=accord[0]  # our note within octave
                                              + all_chords[accord[1]][0]  # add value to get accord
