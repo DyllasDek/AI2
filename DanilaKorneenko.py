@@ -268,17 +268,18 @@ def calc_rating(pop):
 # Initial variables for work
 popul = create_pop(len(final_genom_chord))
 survivors = [0] * (pop_size // 2)
+gener_num = 1000
 
 # Loop for our evolutionary algorithm
-for i in range(1, 1000):
+for i in range(1000):
     # Calculate rating of each genome
     calc_rating(popul)
 
-    # Print our generation
-    print(f"{i}th generation. Best genom in generation:{popul[0].gen_note} and its rating {popul[0].rating}")
-
     # Sort in decreasing order (best of them are first)
     sort_pop(popul)
+
+    # Print our generation
+    print(f"{i}th generation. Best genom in generation:{popul[0].gen_note} and its rating {popul[0].rating}")
 
     # If we've found best member - leave
     if popul[0].rating == 0:
@@ -292,7 +293,7 @@ for i in range(1, 1000):
     new_gen(popul, survivors, pop_size // 2)
 
     # Mutate some members in random
-    mutate(popul, 10, 1)
+    mutate(popul, 16, 1)
 
 # Output best genome
 print(f"Output genome:{popul[0].gen_note} and rating {popul[0].rating}")
