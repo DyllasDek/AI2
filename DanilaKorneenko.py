@@ -1,6 +1,6 @@
 import music21
 import random as rnd
-from mido import Message, MidiFile, MidiTrack
+from mido import Message, MidiFile, MidiTrack, second2tick
 
 
 #Change this variable if you want to work with another file
@@ -11,7 +11,13 @@ mid = MidiFile(input_file)
 pat = 'DanilaKorneenkoOutput'+str(input_num)+'.mid'
 
 
-# Variables for evalutionary algorithm
+for i, track in enumerate(mid.tracks):
+    print('Track {}: {}'.format(i, track.name))
+    for msg in track:
+        print(msg)
+
+
+# Variables for genetic algorithm
 vel = int(mid.tracks[1][4].velocity) - 20
 note_gen = [i for i in range(12)]
 chord_gen = [i for i in range(3)]
@@ -20,7 +26,7 @@ final_genom_note = []
 final_genom_chord = []
 
 # Ticks or something, idk
-count = 1536
+count = int(second2tick((mid.tracks[0][1].tempo/1000000*4),mid.ticks_per_beat,mid.tracks[0][1].tempo))
 
 # To take tonality
 key = music21.converter.parse(input_file).analyze('key')
